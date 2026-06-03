@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Jeffrey Wallk · Enabling Value</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --paper: #f4f0e8;
+    --blueprint: #0d1b2a;
+    --accent: #c8a96e;
+    --accent2: #4a90b8;
+    --accent3: #7eb89a;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --mono: 'DM Mono', 'Courier New', monospace;
+    --display: 'Bebas Neue', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--blueprint);
+    color: var(--paper);
+    font-family: var(--serif);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; mix-blend-mode: screen; }
+  .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(200,169,110,0.4); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: transform 0.12s ease; }
+
+  /* Blueprint grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,144,184,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,144,184,0.05) 1px, transparent 1px),
+      linear-gradient(rgba(74,144,184,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,144,184,0.025) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: linear-gradient(to bottom, rgba(13,27,42,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(4px);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blueprint);
+    background: var(--accent);
+    padding: 0.5rem 1.2rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── MAIN CONTENT ── */
+  main {
+    position: relative;
+    z-index: 1;
+    padding-top: 7rem;
+  }
+
+  /* ── HERO SECTION ── */
+  .about-hero {
+    padding: 4rem 3rem 6rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+    border-bottom: 1px solid rgba(74,144,184,0.2);
+  }
+
+  .hero-left {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .eyebrow::before {
+    content: '';
+    display: block;
+    width: 30px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-name {
+    font-family: var(--display);
+    font-size: clamp(3.5rem, 7vw, 7rem);
+    line-height: 0.92;
+    color: var(--paper);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-name span { color: var(--accent); display: block; }
+
+  .hero-statement {
+    font-family: var(--serif);
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(244,240,232,0.65);
+    line-height: 1.6;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+  }
+
+  .values-row {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .value-pill {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid;
+  }
+
+  .value-pill:nth-child(1) { color: var(--accent3); border-color: var(--accent3); }
+  .value-pill:nth-child(2) { color: var(--accent2); border-color: var(--accent2); }
+  .value-pill:nth-child(3) { color: var(--accent); border-color: var(--accent); }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+  }
+
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blueprint);
+    background: var(--accent);
+    padding: 0.85rem 1.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary:hover { background: var(--paper); transform: translateY(-2px); }
+
+  .btn-secondary {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper);
+    border: 1px solid rgba(244,240,232,0.25);
+    padding: 0.85rem 1.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  /* Headshot */
+  .hero-right {
+    opacity: 0;
+    transform: translateX(20px);
+    animation: fadeLeft 0.8s ease 0.4s forwards;
+    position: relative;
+  }
+
+  .headshot-frame {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+  }
+
+  .headshot-frame::before {
+    content: '';
+    position: absolute;
+    top: -12px; left: -12px;
+    right: 12px; bottom: 12px;
+    border: 1px solid rgba(200,169,110,0.25);
+    z-index: 0;
+  }
+
+  .headshot-frame::after {
+    content: '';
+    position: absolute;
+    top: 12px; left: 12px;
+    right: -12px; bottom: -12px;
+    border: 1px solid rgba(74,144,184,0.2);
+    z-index: 0;
+  }
+
+  .headshot-frame img {
+    width: 100%;
+    height: 480px;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    position: relative;
+    z-index: 1;
+    filter: grayscale(15%) contrast(1.05);
+  }
+
+  .headshot-caption {
+    position: absolute;
+    bottom: -1.5rem;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.3);
+    z-index: 2;
+  }
+
+  /* ── SECTION BASE ── */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 6rem 3rem;
+    border-bottom: 1px solid rgba(74,144,184,0.15);
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 30px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1;
+    color: var(--paper);
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .section-sub {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(244,240,232,0.5);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── ORIGIN STORY ── */
+  .story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .story-text p {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(244,240,232,0.8);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-text p em { color: var(--accent); font-style: italic; }
+  .story-text p strong { color: var(--paper); font-weight: 600; }
+
+  .story-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .stat {
+    border-left: 2px solid var(--accent);
+    padding-left: 1.2rem;
+  }
+
+  .stat-n {
+    font-family: var(--display);
+    font-size: 3.5rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-l {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.4);
+    line-height: 1.5;
+  }
+
+  /* ── PHILOSOPHY ── */
+  .philosophy {
+    background: linear-gradient(135deg, rgba(200,169,110,0.04) 0%, transparent 60%);
+  }
+
+  .philosophy-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: rgba(74,144,184,0.12);
+    border: 1px solid rgba(74,144,184,0.12);
+    margin-top: 1rem;
+  }
+
+  .phil-card {
+    background: var(--blueprint);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .phil-card:hover { background: rgba(10,16,24,0.8); }
+
+  .phil-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .phil-card:hover::before { transform: scaleX(1); }
+  .phil-card:nth-child(1)::before { background: var(--accent3); }
+  .phil-card:nth-child(2)::before { background: var(--accent2); }
+  .phil-card:nth-child(3)::before { background: var(--accent); }
+
+  .phil-rank {
+    font-family: var(--display);
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+
+  .phil-card:nth-child(1) .phil-rank { color: rgba(126,184,154,0.15); }
+  .phil-card:nth-child(2) .phil-rank { color: rgba(74,144,184,0.15); }
+  .phil-card:nth-child(3) .phil-rank { color: rgba(200,169,110,0.15); }
+
+  .phil-title {
+    font-family: var(--display);
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+  }
+
+  .phil-card:nth-child(1) .phil-title { color: var(--accent3); }
+  .phil-card:nth-child(2) .phil-title { color: var(--accent2); }
+  .phil-card:nth-child(3) .phil-title { color: var(--accent); }
+
+  .phil-desc {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: rgba(244,240,232,0.55);
+    line-height: 1.7;
+  }
+
+  /* ── AFFILIATIONS ── */
+  .affiliations-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .affil-card {
+    border: 1px solid rgba(74,144,184,0.15);
+    padding: 1.5rem;
+    transition: all 0.25s;
+    background: rgba(13,27,42,0.4);
+  }
+
+  .affil-card:hover {
+    border-color: rgba(200,169,110,0.35);
+    transform: translateY(-3px);
+    background: rgba(13,27,42,0.7);
+  }
+
+  .affil-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .affil-name {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+
+  .affil-role {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: rgba(244,240,232,0.5);
+    line-height: 1.5;
+  }
+
+  /* ── COMMUNITY ── */
+  .community-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .community-card {
+    border: 1px solid rgba(74,144,184,0.15);
+    padding: 2.5rem;
+    background: rgba(13,27,42,0.4);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .community-card:hover {
+    border-color: rgba(200,169,110,0.3);
+    background: rgba(13,27,42,0.7);
+  }
+
+  .community-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent3);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s;
+  }
+
+  .community-card:hover::before { transform: scaleX(1); }
+  .community-card:nth-child(2)::before { background: var(--accent2); }
+
+  .cc-tag {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent3);
+    margin-bottom: 1rem;
+  }
+
+  .community-card:nth-child(2) .cc-tag { color: var(--accent2); }
+
+  .cc-title {
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--paper);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .cc-desc {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: rgba(244,240,232,0.55);
+    line-height: 1.7;
+  }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .edu-item {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: 1.8rem;
+    border: 1px solid rgba(74,144,184,0.12);
+    background: rgba(13,27,42,0.3);
+  }
+
+  .edu-year {
+    font-family: var(--display);
+    font-size: 2rem;
+    color: rgba(200,169,110,0.3);
+    line-height: 1;
+    flex-shrink: 0;
+    width: 60px;
+  }
+
+  .edu-content {}
+
+  .edu-degree {
+    font-family: var(--serif);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--paper);
+    margin-bottom: 0.3rem;
+  }
+
+  .edu-school {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  /* ── CTA ── */
+  .about-cta {
+    text-align: center;
+    padding: 7rem 3rem;
+    border-bottom: none;
+  }
+
+  .about-cta .section-title { margin-bottom: 1rem; }
+
+  .about-cta p {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: rgba(244,240,232,0.45);
+    max-width: 480px;
+    margin: 0 auto 2.5rem;
+    line-height: 1.7;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(74,144,184,0.2);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-mark {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.25);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeLeft { to { opacity: 1; transform: translateX(0); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .about-hero { grid-template-columns: 1fr; gap: 3rem; padding: 3rem 1.5rem 4rem; }
+    .hero-right { display: none; }
+    .story-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .affiliations-grid { grid-template-columns: 1fr 1fr; }
+    .community-grid { grid-template-columns: 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" style="display:flex; align-items:center; text-decoration:none; background:transparent;">
+    <img src="logo.png" alt="The Value Enablement Group"
+      style="height:52px; width:52px; object-fit:contain; background:transparent;">
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="index.html#frameworks">Frameworks</a></li>
+    <li><a href="index.html#portfolio">Portfolio</a></li>
+    <li><a href="https://jeffw5.github.io/Value/index.html" target="_blank">Demos</a></li>
+  </ul>
+  <a href="avatar.html" class="nav-cta">Ask Jeffrey ›</a>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="about-hero">
+    <div class="hero-left">
+      <div class="eyebrow">Managing Partner · The Value Enablement Group</div>
+      <h1 class="hero-name">Jeffrey<br><span>Wallk</span></h1>
+      <p class="hero-statement">
+        I build the connective tissue between what organizations know, 
+        what they build, and what they deliver — grounding every decision 
+        in semantic precision, systems integrity, and trustworthy AI.
+      </p>
+      <div class="values-row">
+        <span class="value-pill">Planet</span>
+        <span class="value-pill">People</span>
+        <span class="value-pill">Profit</span>
+      </div>
+      <div class="hero-actions">
+        <a href="avatar.html" class="btn-primary">↗ Talk to Jeffrey</a>
+        <a href="services.html" class="btn-secondary">View Services</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="headshot-frame">
+        <img src="jeffrey.png" alt="Jeffrey Wallk">
+        <span class="headshot-caption">Jeffrey Wallk · Deerfield, Illinois</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORIGIN STORY -->
+  <section>
+    <div class="section-label reveal">Origin</div>
+    <h2 class="section-title reveal">The Work<br>Behind<br>the Work</h2>
+    <div class="story-grid">
+      <div class="story-text reveal">
+        <p>
+          My path into enterprise architecture began with a simple conviction: 
+          <em>organizations fail not because they lack data, but because they lack meaning.</em> 
+          After graduating with a BS in Mathematics from the University of Illinois in 1983, 
+          I spent the next four decades building the discipline that bridges those two realities — 
+          knowledge engineering.
+        </p>
+        <p>
+          At <strong>Verizon</strong>, I built the Knowledge Engineering practice from scratch — 
+          the first of its kind in the organization. Using GraphDB, OWL, RDF, SPARQL, SHACL, 
+          and SKOS, I constructed a Unified Semantic Knowledge Layer governing 30,000+ data assets 
+          across the enterprise. Not a project. A discipline.
+        </p>
+        <p>
+          Over 17 years spanning <em>healthcare, pharmaceuticals, telecommunications, and aerospace</em>, 
+          I've learned that the hardest problems in enterprise systems are never technical. 
+          They are ontological. What do we mean by this term? How does this concept relate to that one? 
+          What is the canonical source of truth — and who is accountable for it?
+        </p>
+        <p>
+          That conviction became the foundation of <strong>The Value Enablement Group</strong> — 
+          and of every framework I've developed since: the AI Circuit Breaker, RDSG v2.0, 
+          Holonic Semantic Architecture, and the Morphism-Grounded AI Assurance research 
+          targeting DARPA's DSO program.
+        </p>
+      </div>
+      <div class="story-stats reveal">
+        <div class="stat">
+          <div class="stat-n">17+</div>
+          <div class="stat-l">Years Enterprise Architecture</div>
+        </div>
+        <div class="stat">
+          <div class="stat-n">30K</div>
+          <div class="stat-l">Data Assets Governed at Verizon</div>
+        </div>
+        <div class="stat">
+          <div class="stat-n">5</div>
+          <div class="stat-l">Industries Served</div>
+        </div>
+        <div class="stat">
+          <div class="stat-n">6</div>
+          <div class="stat-l">Original Frameworks Developed</div>
+        </div>
+        <div class="stat">
+          <div class="stat-n">BS</div>
+          <div class="stat-l">Mathematics · U of Illinois · 1983</div>
+        </div>
+        <div class="stat">
+          <div class="stat-n">MBA</div>
+          <div class="stat-l">Finance · Keller Graduate School</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="philosophy">
+    <div class="section-label reveal">Philosophy</div>
+    <h2 class="section-title reveal">The Values<br>Hierarchy</h2>
+    <p class="section-sub reveal">
+      Not a slogan. A decision-making framework applied to every engagement, 
+      every architecture, every recommendation.
+    </p>
+    <div class="philosophy-grid reveal">
+      <div class="phil-card">
+        <div class="phil-rank">01</div>
+        <div class="phil-title">Planet</div>
+        <div class="phil-desc">
+          Every architectural decision must first ask: does this serve or harm 
+          the planetary systems that sustain all life? Technology that optimizes 
+          for extraction at the expense of regeneration is not architecture — 
+          it is a liability. I ground every engagement in Doughnut Economics 
+          and planetary boundary thinking.
+        </div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-rank">02</div>
+        <div class="phil-title">People</div>
+        <div class="phil-desc">
+          Human dignity, agency, and flourishing come before economic efficiency. 
+          AI systems that cannot explain their decisions to the humans they affect 
+          are not trustworthy systems — they are power asymmetries encoded in software. 
+          My AI governance frameworks exist to restore that balance.
+        </div>
+      </div>
+      <div class="phil-card">
+        <div class="phil-rank">03</div>
+        <div class="phil-title">Profit</div>
+        <div class="phil-desc">
+          Economic sustainability is essential — but it is the outcome of right action, 
+          not its justification. Organizations that deliver genuine value to people 
+          within planetary boundaries will generate durable, compounding returns. 
+          That is what "enabling value" means.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AFFILIATIONS -->
+  <section>
+    <div class="section-label reveal">Affiliations</div>
+    <h2 class="section-title reveal">Professional<br>Community</h2>
+    <p class="section-sub reveal">
+      Active contributor, co-lead, and founding member across the knowledge 
+      engineering and systems engineering landscape.
+    </p>
+    <div class="affiliations-grid reveal">
+      <div class="affil-card">
+        <span class="affil-icon">◈</span>
+        <div class="affil-name">INCOSE KSWG</div>
+        <div class="affil-role">Knowledge Systems Working Group — active contributor and framework author</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">⬡</span>
+        <div class="affil-name">Business Architecture Guild</div>
+        <div class="affil-role">Meta Model Team Co-Lead — driving the discipline's conceptual foundation</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">◇</span>
+        <div class="affil-name">EKGF</div>
+        <div class="affil-role">Enterprise Knowledge Graph Foundation — active member and contributor</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">○</span>
+        <div class="affil-name">Digital Twin Consortium</div>
+        <div class="affil-role">Active member bridging semantic governance and digital twin architecture</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">◎</span>
+        <div class="affil-name">FEAPO</div>
+        <div class="affil-role">Federation of Enterprise Architecture Professional Organizations — board member</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">△</span>
+        <div class="affil-name">CAEAP</div>
+        <div class="affil-role">Certified Architecture Enterprise Architect Practitioner — founding contributor</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">▽</span>
+        <div class="affil-name">University of Arizona</div>
+        <div class="affil-role">Research collaborator with Paul Wach — AI Circuit Breaker co-author</div>
+      </div>
+      <div class="affil-card">
+        <span class="affil-icon">◱</span>
+        <div class="affil-name">INCOSE SE4AI</div>
+        <div class="affil-role">Systems Engineering for AI track — paper submitted for 2025 conference</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMUNITY -->
+  <section>
+    <div class="section-label reveal">Community</div>
+    <h2 class="section-title reveal">Beyond<br>the Work</h2>
+    <p class="section-sub reveal">
+      Architecture is not only how we build systems. It is how we build societies.
+    </p>
+    <div class="community-grid reveal">
+      <div class="community-card">
+        <div class="cc-tag">Civic Initiative · Daily Practice</div>
+        <div class="cc-title">One Good Thing</div>
+        <div class="cc-desc">
+          A community initiative grounded in the conviction that institutional decay 
+          is fought one positive action at a time. One Good Thing is a daily practice 
+          of constructive engagement — finding, doing, and sharing one thing that 
+          builds rather than extracts, connects rather than divides, regenerates 
+          rather than depletes. It is the Planet > People > Profit values hierarchy 
+          in daily lived form.
+        </div>
+      </div>
+      <div class="community-card">
+        <div class="cc-tag">501(c)(3) · Ghana · Education</div>
+        <div class="cc-title">Vision Awake Africa for Development</div>
+        <div class="cc-desc">
+          VAAFD operates the Carolyn A. Miller Schools at the Buduburam Refugee 
+          Settlement in Ghana — providing education, stability, and opportunity 
+          to children and families in one of West Africa's most vulnerable communities. 
+          My support for VAAFD is a direct expression of the People tier of my 
+          values hierarchy: human dignity is not negotiable, and geography 
+          should never determine a child's access to learning.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EDUCATION -->
+  <section>
+    <div class="section-label reveal">Education</div>
+    <h2 class="section-title reveal">Academic<br>Foundation</h2>
+    <div class="edu-grid reveal">
+      <div class="edu-item">
+        <div class="edu-year">1983</div>
+        <div class="edu-content">
+          <div class="edu-degree">BS in Mathematics</div>
+          <div class="edu-school">University of Illinois</div>
+        </div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-year">MBA</div>
+        <div class="edu-content">
+          <div class="edu-degree">MBA in Finance</div>
+          <div class="edu-school">Keller Graduate School of Business</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="about-cta">
+    <div class="section-label reveal" style="justify-content:center;">Next Step</div>
+    <h2 class="section-title reveal">Ready to<br>Connect?</h2>
+    <p class="reveal">
+      Whether you're facing an AI governance challenge, exploring a semantic 
+      architecture engagement, or considering Jeffrey for a senior role — 
+      the conversation starts here.
+    </p>
+    <div class="cta-buttons reveal">
+      <a href="avatar.html" class="btn-primary">↗ Talk to Jeffrey</a>
+      <a href="services.html" class="btn-secondary">View Services</a>
+      <a href="mailto:jeffrey@enablingvalue.com" class="btn-secondary">Get in Touch</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-mark">The Value Enablement Group, LLC · Deerfield, Illinois</span>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="https://jeffw5.github.io/Value/index.html" target="_blank">Portfolio</a></li>
+    <li><a href="https://linkedin.com" target="_blank">LinkedIn</a></li>
+    <li><a href="mailto:jeffrey@enablingvalue.com">Contact</a></li>
+  </ul>
+  <span class="footer-mark">Planet › People › Profit</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx-4}px,${my-4}px)`;
+  });
+  (function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx-14}px,${ry-14}px)`;
+    requestAnimationFrame(animRing);
+  })();
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
