@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services — Jeffrey Wallk · Enabling Value</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --paper: #f4f0e8;
+    --blueprint: #0d1b2a;
+    --accent: #c8a96e;
+    --accent2: #4a90b8;
+    --accent3: #7eb89a;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --mono: 'DM Mono', 'Courier New', monospace;
+    --display: 'Bebas Neue', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--blueprint);
+    color: var(--paper);
+    font-family: var(--serif);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; mix-blend-mode: screen; }
+  .cursor-ring { width: 32px; height: 32px; border: 1px solid rgba(200,169,110,0.4); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transition: transform 0.12s ease; }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(74,144,184,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,144,184,0.05) 1px, transparent 1px),
+      linear-gradient(rgba(74,144,184,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(74,144,184,0.025) 1px, transparent 1px);
+    background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    background: linear-gradient(to bottom, rgba(13,27,42,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(4px);
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.6);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+  .nav-cta {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blueprint);
+    background: var(--accent);
+    padding: 0.5rem 1.2rem;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── LAYOUT ── */
+  main {
+    position: relative;
+    z-index: 1;
+    padding-top: 7rem;
+  }
+
+  section {
+    padding: 6rem 3rem;
+    border-bottom: 1px solid rgba(74,144,184,0.15);
+    position: relative;
+    z-index: 1;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .section-label::before {
+    content: '';
+    width: 30px; height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 1;
+    color: var(--paper);
+    margin-bottom: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .section-sub {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(244,240,232,0.5);
+    max-width: 580px;
+    line-height: 1.7;
+    margin-bottom: 3.5rem;
+  }
+
+  .btn-primary {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blueprint);
+    background: var(--accent);
+    padding: 0.85rem 1.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-primary:hover { background: var(--paper); transform: translateY(-2px); }
+
+  .btn-secondary {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper);
+    border: 1px solid rgba(244,240,232,0.25);
+    padding: 0.85rem 1.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+  /* ── HERO ── */
+  .services-hero {
+    padding: 4rem 3rem 6rem;
+    border-bottom: 1px solid rgba(74,144,184,0.2);
+  }
+
+  .hero-inner {
+    max-width: 900px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .eyebrow::before {
+    content: '';
+    display: block;
+    width: 30px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 0.92;
+    color: var(--paper);
+    margin-bottom: 2rem;
+    letter-spacing: 0.02em;
+  }
+
+  .hero-title span { color: var(--accent); }
+
+  .hero-body {
+    font-family: var(--serif);
+    font-size: clamp(1rem, 1.5vw, 1.3rem);
+    font-weight: 300;
+    color: rgba(244,240,232,0.65);
+    line-height: 1.7;
+    max-width: 680px;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── HOW I WORK ── */
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: rgba(74,144,184,0.12);
+    border: 1px solid rgba(74,144,184,0.12);
+    margin-top: 1rem;
+  }
+
+  .how-card {
+    background: var(--blueprint);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+  }
+
+  .how-card:hover { background: rgba(10,16,24,0.8); }
+
+  .how-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .how-card:hover::before { transform: scaleX(1); }
+  .how-card:nth-child(1)::before { background: var(--accent); }
+  .how-card:nth-child(2)::before { background: var(--accent2); }
+  .how-card:nth-child(3)::before { background: var(--accent3); }
+
+  .how-number {
+    font-family: var(--display);
+    font-size: 5rem;
+    line-height: 1;
+    color: rgba(74,144,184,0.08);
+    position: absolute;
+    top: 1rem; right: 1.5rem;
+  }
+
+  .how-icon {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .how-title {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--paper);
+    margin-bottom: 0.7rem;
+  }
+
+  .how-desc {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: rgba(244,240,232,0.5);
+    line-height: 1.7;
+  }
+
+  /* ── SERVICE AREAS ── */
+  .service-area {
+    padding: 5rem 3rem;
+    border-bottom: 1px solid rgba(74,144,184,0.15);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  .service-area:nth-child(even) {
+    background: rgba(74,144,184,0.02);
+  }
+
+  .sa-label {
+    position: sticky;
+    top: 7rem;
+  }
+
+  .sa-number {
+    font-family: var(--display);
+    font-size: 6rem;
+    line-height: 1;
+    color: rgba(200,169,110,0.08);
+    margin-bottom: 0.5rem;
+  }
+
+  .sa-tag {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+
+  .sa-title {
+    font-family: var(--display);
+    font-size: 2.2rem;
+    color: var(--paper);
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .sa-summary {
+    font-family: var(--serif);
+    font-size: 0.9rem;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(244,240,232,0.4);
+    line-height: 1.6;
+  }
+
+  .sa-content {}
+
+  .sa-desc {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(244,240,232,0.75);
+    line-height: 1.8;
+    margin-bottom: 2rem;
+  }
+
+  .sa-desc em { color: var(--accent); font-style: italic; }
+  .sa-desc strong { color: var(--paper); font-weight: 600; }
+
+  .deliverables {
+    margin-bottom: 2rem;
+  }
+
+  .deliverables-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.3);
+    margin-bottom: 0.8rem;
+  }
+
+  .deliverable-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .deliverable-list li {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: rgba(244,240,232,0.55);
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .deliverable-list li::before {
+    content: '→';
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .tech-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 2rem;
+  }
+
+  .tech-tag {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.3);
+    border: 1px solid rgba(74,144,184,0.18);
+    padding: 0.25rem 0.55rem;
+  }
+
+  .client-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: center;
+  }
+
+  .client-label {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.25);
+    margin-right: 0.3rem;
+  }
+
+  .client-name {
+    font-family: var(--serif);
+    font-size: 0.82rem;
+    font-style: italic;
+    color: rgba(244,240,232,0.4);
+    padding: 0.2rem 0.6rem;
+    border: 1px solid rgba(244,240,232,0.08);
+  }
+
+  /* ── ENGAGEMENT MODEL ── */
+  .engagement {
+    background: linear-gradient(135deg, rgba(200,169,110,0.04) 0%, transparent 60%);
+  }
+
+  .engagement-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .eng-card {
+    border: 1px solid rgba(74,144,184,0.15);
+    padding: 2rem;
+    background: rgba(13,27,42,0.5);
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .eng-card:hover {
+    border-color: rgba(200,169,110,0.35);
+    transform: translateY(-4px);
+    background: rgba(13,27,42,0.8);
+  }
+
+  .eng-type {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+  }
+
+  .eng-card:nth-child(2) .eng-type { color: var(--accent2); }
+  .eng-card:nth-child(3) .eng-type { color: var(--accent3); }
+
+  .eng-title {
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--paper);
+    margin-bottom: 0.7rem;
+    line-height: 1.2;
+  }
+
+  .eng-desc {
+    font-family: var(--serif);
+    font-size: 0.88rem;
+    font-weight: 300;
+    color: rgba(244,240,232,0.5);
+    line-height: 1.65;
+    margin-bottom: 1.2rem;
+  }
+
+  .eng-fit {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: rgba(244,240,232,0.3);
+    line-height: 1.5;
+  }
+
+  /* ── CTA ── */
+  .services-cta {
+    text-align: center;
+    padding: 7rem 3rem;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .services-cta::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid rgba(74,144,184,0.2);
+    padding: 2.5rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-mark {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.25);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(244,240,232,0.3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--accent); }
+
+  /* ── REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .service-area { grid-template-columns: 1fr; gap: 2rem; }
+    .sa-label { position: static; }
+    .how-grid { grid-template-columns: 1fr; }
+    .engagement-grid { grid-template-columns: 1fr; }
+    nav { padding: 1.2rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 4rem 1.5rem; }
+    .service-area { padding: 4rem 1.5rem; }
+    .services-hero { padding: 3rem 1.5rem 4rem; }
+    footer { flex-direction: column; gap: 1.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+ <a href="index.html" style="display:flex; align-items:center; text-decoration:none; background:transparent;">>
+    <img src="logo.png" alt="The Value Enablement Group"
+      style="height:52px; width:52px; object-fit:contain; mix-blend-mode:multiply;">
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="index.html#frameworks">Frameworks</a></li>
+    <li><a href="index.html#portfolio">Portfolio</a></li>
+    <li><a href="https://jeffw5.github.io/Value/index.html" target="_blank">Demos</a></li>
+  </ul>
+  <a href="avatar.html" class="nav-cta">Ask Jeffrey ›</a>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <div class="services-hero">
+    <div class="hero-inner">
+      <div class="eyebrow">The Value Enablement Group, LLC</div>
+      <h1 class="hero-title">Creating.<br>Building.<br><span>Delivering.</span></h1>
+      <p class="hero-body">
+        The right value — not the most value, not the fastest value. 
+        The value that endures, compounds, and regenerates. 
+        Every engagement is grounded in the Planet › People › Profit hierarchy 
+        and delivered with the precision of a trained mathematician 
+        and the judgment of a seasoned architect.
+      </p>
+      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href="avatar.html" class="btn-primary">↗ Discuss Your Challenge</a>
+        <a href="about.html" class="btn-secondary">About Jeffrey</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW I WORK -->
+  <section>
+    <div class="section-label reveal">Approach</div>
+    <h2 class="section-title reveal">How I Work</h2>
+    <p class="section-sub reveal">
+      Three phases. Every engagement. No exceptions.
+    </p>
+    <div class="how-grid reveal">
+      <div class="how-card">
+        <span class="how-number">01</span>
+        <span class="how-icon">◎</span>
+        <div class="how-title">Create</div>
+        <div class="how-desc">
+          Diagnose before prescribing. Every engagement begins with deep 
+          structural listening — understanding not just the stated problem 
+          but the system dynamics generating it. I build the ontological 
+          foundation before touching the architecture.
+        </div>
+      </div>
+      <div class="how-card">
+        <span class="how-number">02</span>
+        <span class="how-icon">◈</span>
+        <div class="how-title">Build</div>
+        <div class="how-desc">
+          Frameworks grounded in category theory, STPA/STAMP safety methodology, 
+          and semantic precision. Every component is traceable to a requirement. 
+          Every requirement is traceable to a value. No orphaned artifacts.
+        </div>
+      </div>
+      <div class="how-card">
+        <span class="how-number">03</span>
+        <span class="how-icon">⬡</span>
+        <div class="how-title">Deliver</div>
+        <div class="how-desc">
+          Outcomes that persist beyond the engagement. I build the internal 
+          capability alongside the solution — so organizations own what they 
+          receive and can extend it without dependency on continued consulting.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE 1 -->
+  <div class="service-area reveal">
+    <div class="sa-label">
+      <div class="sa-number">01</div>
+      <div class="sa-tag">Core Practice</div>
+      <div class="sa-title">Enterprise Architecture &amp; Semantic Governance</div>
+      <div class="sa-summary">Building the knowledge engineering discipline from the ground up</div>
+    </div>
+    <div class="sa-content">
+      <p class="sa-desc">
+        Most organizations have data. Few have <em>knowledge</em>. The difference is meaning — 
+        the formal, machine-readable, governed representation of what your data actually means, 
+        how concepts relate to each other, and who is accountable for each assertion.
+      </p>
+      <p class="sa-desc">
+        I build <strong>Unified Semantic Knowledge Layers</strong> — the connective tissue 
+        between your data assets, your AI systems, and your business decisions. 
+        Using OWL, RDF, SPARQL, SHACL, SKOS, and GraphDB, I construct knowledge graphs 
+        that don't just store information but reason over it.
+      </p>
+      <div class="deliverables">
+        <div class="deliverables-label">Typical Deliverables</div>
+        <ul class="deliverable-list">
+          <li>Enterprise ontology design and implementation</li>
+          <li>Knowledge graph deployment and governance framework</li>
+          <li>Semantic data asset inventory and classification</li>
+          <li>SHACL constraint validation and data quality rules</li>
+          <li>Knowledge engineering practice standup and team enablement</li>
+          <li>GraphDB / triplestore architecture and operations playbook</li>
+        </ul>
+      </div>
+      <div class="tech-tags">
+        <span class="tech-tag">OWL / RDF</span>
+        <span class="tech-tag">SPARQL</span>
+        <span class="tech-tag">SHACL</span>
+        <span class="tech-tag">SKOS</span>
+        <span class="tech-tag">GraphDB</span>
+        <span class="tech-tag">Knowledge Graph</span>
+        <span class="tech-tag">Ontology Engineering</span>
+        <span class="tech-tag">Linked Data</span>
+      </div>
+      <div class="client-strip">
+        <span class="client-label">Applied at:</span>
+        <span class="client-name">Verizon</span>
+        <span class="client-name">AbbVie</span>
+        <span class="client-name">Hospira/Pfizer</span>
+        <span class="client-name">Mylan N.V.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 2 -->
+  <div class="service-area reveal">
+    <div class="sa-label">
+      <div class="sa-number">02</div>
+      <div class="sa-tag">Emerging Practice</div>
+      <div class="sa-title">AI Governance &amp; Trustworthiness Architecture</div>
+      <div class="sa-summary">Formal assurance frameworks for high-stakes AI deployments</div>
+    </div>
+    <div class="sa-content">
+      <p class="sa-desc">
+        AI systems deployed in healthcare, aerospace, defense, and financial services 
+        cannot fail silently. The consequences are measured in lives, not user experience metrics. 
+        Yet most AI governance frameworks are advisory documents — not executable architectures.
+      </p>
+      <p class="sa-desc">
+        The <strong>AI Circuit Breaker</strong> and <strong>RDSG v2.0</strong> are formal, 
+        implementable assurance architectures. They integrate <em>STPA/STAMP hazard analysis</em>, 
+        GUM-based uncertainty quantification, and morphism-grounded category theory to provide 
+        mathematically traceable safety guarantees — not just compliance checkboxes.
+      </p>
+      <div class="deliverables">
+        <div class="deliverables-label">Typical Deliverables</div>
+        <ul class="deliverable-list">
+          <li>AI Circuit Breaker architecture implementation</li>
+          <li>STPA/STAMP hazard analysis for AI systems</li>
+          <li>Requirements-Driven Semantic Gateway (RDSG) deployment</li>
+          <li>AI governance framework design and rollout</li>
+          <li>Uncertainty quantification and MTBH metric baseline</li>
+          <li>Human-system interface safety analysis</li>
+        </ul>
+      </div>
+      <div class="tech-tags">
+        <span class="tech-tag">STPA / STAMP</span>
+        <span class="tech-tag">AI Assurance</span>
+        <span class="tech-tag">Category Theory</span>
+        <span class="tech-tag">GUM Uncertainty</span>
+        <span class="tech-tag">RDSG</span>
+        <span class="tech-tag">Circuit Breaker</span>
+        <span class="tech-tag">INCOSE</span>
+        <span class="tech-tag">ISO 15288</span>
+      </div>
+      <div class="client-strip">
+        <span class="client-label">Applied at:</span>
+        <span class="client-name">Gulfstream</span>
+        <span class="client-name">Yaskawa America</span>
+        <span class="client-name">Baxter Healthcare</span>
+        <span class="client-name">DARPA DSO</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 3 -->
+  <div class="service-area reveal">
+    <div class="sa-label">
+      <div class="sa-number">03</div>
+      <div class="sa-tag">Transformation</div>
+      <div class="sa-title">Digital Transformation &amp; Enterprise Intelligence</div>
+      <div class="sa-summary">End-to-end architecture for organizations becoming data-intelligent</div>
+    </div>
+    <div class="sa-content">
+      <p class="sa-desc">
+        Digital transformation fails when it is treated as a technology program 
+        rather than an <em>architectural discipline</em>. The question is never 
+        "which platform should we buy?" It is "what does our organization need to know, 
+        and how do we build the capability to know it reliably?"
+      </p>
+      <p class="sa-desc">
+        I design <strong>enterprise intelligence platforms</strong> — holonic architectures 
+        that integrate semantic governance, operational data, AI inference, and human judgment 
+        into coherent, governable wholes. From smart manufacturing floors to pharmaceutical 
+        R&amp;D pipelines to telecom network operations.
+      </p>
+      <div class="deliverables">
+        <div class="deliverables-label">Typical Deliverables</div>
+        <ul class="deliverable-list">
+          <li>Enterprise intelligence platform architecture</li>
+          <li>Holonic system design and integration blueprint</li>
+          <li>OT/IT convergence architecture (ISA-95 / Purdue model)</li>
+          <li>Digital twin semantic layer design</li>
+          <li>Data product and data mesh governance framework</li>
+          <li>Platform vendor evaluation and selection support</li>
+        </ul>
+      </div>
+      <div class="tech-tags">
+        <span class="tech-tag">Holonic Architecture</span>
+        <span class="tech-tag">Digital Twin</span>
+        <span class="tech-tag">ISA-95</span>
+        <span class="tech-tag">OT/IT Convergence</span>
+        <span class="tech-tag">Data Mesh</span>
+        <span class="tech-tag">MES / SCADA</span>
+        <span class="tech-tag">Smart Manufacturing</span>
+      </div>
+      <div class="client-strip">
+        <span class="client-label">Applied at:</span>
+        <span class="client-name">Baxter FABRIC</span>
+        <span class="client-name">Hollister</span>
+        <span class="client-name">Gulfstream</span>
+        <span class="client-name">Yaskawa America</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE 4 -->
+  <div class="service-area reveal">
+    <div class="sa-label">
+      <div class="sa-number">04</div>
+      <div class="sa-tag">Research &amp; Advisory</div>
+      <div class="sa-title">Research, Proposals &amp; Thought Leadership</div>
+      <div class="sa-summary">DARPA, DoD, and academic proposal architecture and research collaboration</div>
+    </div>
+    <div class="sa-content">
+      <p class="sa-desc">
+        Frontier research requires frontier architecture thinking. I bring the same 
+        structural rigor to research proposals and academic collaboration that I bring 
+        to enterprise deployments — because <em>the quality of the question 
+        determines the quality of the answer</em>.
+      </p>
+      <p class="sa-desc">
+        Current active research includes morphism-grounded AI trustworthiness targeting 
+        <strong>DARPA DSO Thrust 4</strong>, co-authored with Paul Wach at the University of Arizona, 
+        and the AI Circuit Breaker paper submitted to <strong>INCOSE SE4AI</strong>. 
+        I also provide strategic advisory to organizations navigating the intersection 
+        of systems engineering, AI governance, and institutional policy.
+      </p>
+      <div class="deliverables">
+        <div class="deliverables-label">Typical Deliverables</div>
+        <ul class="deliverable-list">
+          <li>DARPA / NSF / DoD proposal architecture and writing</li>
+          <li>Academic co-authorship and peer review preparation</li>
+          <li>INCOSE working group contributions and framework papers</li>
+          <li>AI governance policy design for regulated industries</li>
+          <li>Executive briefings and board-level AI strategy advisory</li>
+          <li>Competitive landscape analysis and positioning</li>
+        </ul>
+      </div>
+      <div class="tech-tags">
+        <span class="tech-tag">DARPA DSO</span>
+        <span class="tech-tag">INCOSE KSWG</span>
+        <span class="tech-tag">SE4AI</span>
+        <span class="tech-tag">Category Theory</span>
+        <span class="tech-tag">Policy Architecture</span>
+        <span class="tech-tag">Academic Research</span>
+      </div>
+      <div class="client-strip">
+        <span class="client-label">Active research:</span>
+        <span class="client-name">DARPA DSO BAA</span>
+        <span class="client-name">U of Arizona</span>
+        <span class="client-name">INCOSE SE4AI</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENGAGEMENT MODEL -->
+  <section class="engagement">
+    <div class="section-label reveal">Engagement</div>
+    <h2 class="section-title reveal">How We<br>Work Together</h2>
+    <p class="section-sub reveal">
+      Three engagement models designed around your context and timeline.
+    </p>
+    <div class="engagement-grid reveal">
+      <div class="eng-card">
+        <div class="eng-type">Advisory</div>
+        <div class="eng-title">Strategic Advisory &amp; Architecture Review</div>
+        <div class="eng-desc">
+          Ongoing strategic counsel for organizations navigating AI governance, 
+          semantic architecture decisions, or enterprise transformation. 
+          Structured as monthly retainer with defined availability and deliverables.
+        </div>
+        <div class="eng-fit">Best fit: CTO/CDO offices, innovation teams, board advisory</div>
+      </div>
+      <div class="eng-card">
+        <div class="eng-type">Project</div>
+        <div class="eng-title">Embedded Architecture Engagement</div>
+        <div class="eng-desc">
+          Defined-scope project engagement with clear deliverables, timelines, 
+          and success criteria. I work alongside your team — transferring knowledge 
+          and building internal capability throughout.
+        </div>
+        <div class="eng-fit">Best fit: Platform builds, framework implementations, transformation programs</div>
+      </div>
+      <div class="eng-card">
+        <div class="eng-type">Executive</div>
+        <div class="eng-title">Senior Leadership Role</div>
+        <div class="eng-desc">
+          Available for Director/VP level roles in semantic architecture, 
+          knowledge engineering, AI governance, or enterprise architecture. 
+          Bringing 17+ years of applied practice and original framework development 
+          to organizations ready to build the discipline properly.
+        </div>
+        <div class="eng-fit">Best fit: Healthcare, pharma, telecom, aerospace, financial services</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="services-cta">
+    <div class="section-label reveal" style="justify-content:center;">Start the Conversation</div>
+    <h2 class="section-title reveal">What Problem<br>Are You Solving?</h2>
+    <p style="font-family:var(--serif); font-size:1.05rem; font-style:italic; color:rgba(244,240,232,0.45); max-width:480px; margin:0 auto 2.5rem; line-height:1.7;" class="reveal">
+      The best engagements begin with a direct conversation about what's 
+      actually broken — not a proposal process. Let's start there.
+    </p>
+    <div class="cta-buttons reveal">
+      <a href="avatar.html" class="btn-primary">↗ Talk to Jeffrey</a>
+      <a href="mailto:jeffrey@enablingvalue.com" class="btn-secondary">✉ Send a Note</a>
+      <a href="about.html" class="btn-secondary">Learn More About Jeffrey</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-mark">The Value Enablement Group, LLC · Deerfield, Illinois</span>
+  <ul class="footer-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="index.html#frameworks">Frameworks</a></li>
+    <li><a href="https://jeffw5.github.io/Value/index.html" target="_blank">Portfolio</a></li>
+    <li><a href="mailto:jeffrey@enablingvalue.com">Contact</a></li>
+  </ul>
+  <span class="footer-mark">Planet › People › Profit</span>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.transform = `translate(${mx-4}px,${my-4}px)`;
+  });
+  (function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.transform = `translate(${rx-14}px,${ry-14}px)`;
+    requestAnimationFrame(animRing);
+  })();
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
