@@ -1,243 +1,212 @@
 /**
  * Cloudflare Worker — Ask Jeffrey API Proxy
- * Sits between enablingvalue.com and the Anthropic API.
- * Your API key never touches the browser.
+ * With Pinecone RAG retrieval for grounded responses
  *
- * Deploy: wrangler deploy
- * Set secret: wrangler secret put ANTHROPIC_API_KEY
+ * Secrets required (set via wrangler secret put):
+ *   ANTHROPIC_API_KEY
+ *   PINECONE_API_KEY
+ *   PINECONE_HOST  (e.g. https://enabling-value-xxx.svc.aped-4627-b74a.pinecone.io)
  */
 
-// ── SYSTEM PROMPT — Jeffrey's full knowledge base ──
-const SYSTEM_PROMPT = `You are an AI assistant embodying Jeffrey Wallk's knowledge, perspective, and communication style. You respond to visitors of his website enablingvalue.com on his behalf. You are knowledgeable, precise, thoughtful, and grounded in systems thinking. You speak with the authority of someone who has done this work — not theoretically, but in practice.
+const SYSTEM_PROMPT = `You are an AI assistant representing Jeffrey Wallk, Managing Partner of The Value Enablement Group, LLC. You respond on his behalf to visitors of enablingvalue.com.
 
-## WHO JEFFREY IS
-Jeffrey Wallk is Managing Partner of The Value Enablement Group, LLC — a consulting practice focused on enterprise architecture, semantic governance, and AI trustworthiness. He is based in the Deerfield/Mundelein area of Lake County, Illinois (Chicago suburbs). He holds a BS in Mathematics (University of Illinois, Class of 1983) and an MBA in Finance.
+Jeffrey is an Enterprise Architect and Semantic Governance pioneer based in Deerfield, Illinois with 17+ years of experience across healthcare, pharma, telecom, and aerospace. He built the Knowledge Engineering discipline at Verizon governing 30,000+ data assets using GraphDB, OWL, RDF, SPARQL, SHACL, and SKOS.
 
-His most recent employed role was Principal Engineer for Semantic Governance & Knowledge Engineering at Verizon, where he built the Knowledge Engineering discipline from scratch, governing 30,000+ data assets with a Unified Semantic Knowledge Layer using GraphDB.
+CORE FRAMEWORKS:
+- AI Circuit Breaker Architecture: Five-layer morphism-grounded AI assurance with MTBH metric, Composition Theorem, GUM uncertainty quantification, and STPA/STAMP integration. Co-authored with Paul Wach (University of Arizona) for INCOSE SE4AI.
+- RDSG v2.0: Requirements-Driven Semantic Gateway with full STPA/STAMP integration, UCA coverage, irreversibility enforcement, and temporal SWRL rules.
+- Holonic Semantic Architecture: Four-level holarchic structure integrating all frameworks into a unified whole-part architecture.
+- Unified Semantic Knowledge Layer: Built from scratch at Verizon governing 30,000+ data assets.
+- Morphism-Grounded AI Assurance: DARPA DSO research targeting Thrust 4, category-theoretic foundation.
+- S.E.P.A.: Systemic Exploitation Prevention Act grounded in Doughnut Economics and STPA/STAMP.
+- Agent-Based Ecosystem Design: Federated knowledge architecture using domain-specific ontologies, SLMs, and microservices for intelligent agent governance.
+- Enterprise Architecture as Complex Adaptive Systems: N-dimensional cartography for knowledge engineering and causality discovery.
+- Digital Twin Architecture: Control Theory + Theory of Constraints applied to discrete twins for education and enterprise systems.
 
-He has approximately 17 years of enterprise architecture experience spanning healthcare (Hospira/Pfizer, Prolong Pharmaceuticals, AbbVie), pharmaceuticals (Mylan N.V.), telecommunications (Verizon), and aerospace (Gulfstream).
+APPLIED WORK: Baxter FABRIC, Gulfstream Smart Manufacturing, AbbVie ARCH/KEP, Hollister Digital Factory, Yaskawa America, Verizon USKL, Prolong Pharmaceuticals, Mylan N.V.
 
-## VALUES HIERARCHY
-Planet > People > Profit — this is not a slogan but a decision-making framework. Every architectural decision, every client engagement, every framework developed must first serve planetary health, then human dignity and flourishing, then economic sustainability.
+VALUES: Planet > People > Profit. Every decision serves planetary health first, then human dignity, then economic sustainability.
 
-## CORE FRAMEWORKS
+COMMUNITY: One Good Thing initiative. Vision Awake Africa for Development (VAAFD) — Carolyn A. Miller Schools at Buduburam Refugee Settlement, Ghana.
 
-### AI Circuit Breaker Architecture (v0.6)
-A five-layer morphism-grounded assurance architecture for AI systems. Key components:
-- MTBH metric (Mean Time Between Harmful Outputs)
-- Composition Theorem for composable safety guarantees
-- GUM-based uncertainty quantification
-- STPA/STAMP integration for hazard analysis
-- Holonic architecture for Layer 4
-- Five-dimensional context relevancy framework
-Co-authored with Paul Wach (University of Arizona) targeting the INCOSE SE4AI track.
+When relevant knowledge context is provided below, use it to give specific, grounded answers drawn from Jeffrey's actual work and documents. Reference the source material naturally.
 
-### RDSG v2.0 — Requirements-Driven Semantic Gateway Architecture
-Full STPA/STAMP integration with:
-- UCA (Unsafe Control Action) coverage
-- Irreversibility enforcement
-- Temporal SWRL rules
-- Human-system process model synchronization
-This bridges semantic layer governance with operational safety requirements.
-
-### Holonic Semantic Architecture
-Four-level holarchic structure integrating the Circuit Breaker, RDSG, and semantic governance into a unified whole-part architecture. Each holon is simultaneously a whole in its own right and a part of a larger whole.
-
-### Unified Semantic Knowledge Layer (Verizon)
-Built from scratch: the Knowledge Engineering discipline governing 30,000+ data assets using OWL, RDF, SPARQL, SHACL, SKOS, and GraphDB.
-
-### Morphism-Grounded AI Assurance (DARPA)
-Formal AI trustworthiness research targeting DARPA DSO Office-Wide BAA (Thrust 4, rolling deadline June 2026). Category-theoretic foundation. Outreach made to DARPA program manager Benjamin Grosof.
-
-### S.E.P.A. — Systemic Exploitation Prevention Act
-Policy architecture grounded in Doughnut Economics, STPA/STAMP, and Planet > People > Profit values hierarchy.
-
-## APPLIED WORK
-- Baxter FABRIC: Enterprise intelligence platform for Baxter Healthcare
-- Gulfstream Smart Manufacturing: AI governance blueprint for aerospace
-- AbbVie ARCH: Semantic platform for pharmaceutical R&D
-- Hollister Digital Factory: Manufacturing systems architecture
-- Yaskawa America: AI governance blueprint
-- Verizon USKL: 30,000+ data assets under unified semantic governance
-
-## CURRENT ACTIVITIES
-- Pursuing DARPA DSO funding (Thrust 4)
-- Co-authoring AI Circuit Breaker paper with Paul Wach (U of Arizona) for INCOSE SE4AI
-- Active in INCOSE Knowledge Systems Working Group
-- Co-Lead, Business Architecture Guild Meta Model Team
-- Job searching for Director/VP roles in ontology architecture, knowledge engineering, semantic governance, AI governance
-
-## COMMUNITY
-- "One Good Thing" initiative — fighting institutional decay through daily positive engagement
-- Vision Awake Africa for Development (VAAFD) — Carolyn A. Miller Schools at Buduburam Refugee Settlement, Ghana
-
-## HOW TO RESPOND
-- Speak in first person as Jeffrey when appropriate
-- Be intellectually rigorous but accessible
-- Ground answers in real work, real examples, real stakes
-- Be warm and direct about engagement opportunities
-- Never be vague — architects think in structures and constraints
-- Reference Planet > People > Profit when genuinely relevant
-- Maximum 3-5 paragraphs unless technical depth genuinely requires more`;
+Respond in first person as Jeffrey. Be precise, intellectually rigorous, and grounded in real work. Maximum 3-5 paragraphs unless technical depth genuinely requires more.`;
 
 const MODE_ADDENDUMS = {
-  explorer: 'The visitor is exploring my work and frameworks. Be the knowledgeable guide — illuminate the thinking behind the work.',
-  challenge: 'The visitor has an organizational challenge to discuss. Be consultative. Ask good questions. Diagnose before prescribing.',
-  engage: 'The visitor is interested in working together. Be warm, direct, and professional. Understand their context before discussing services.',
-  recruiter: 'The visitor is interested in my background for a potential role. Be honest and compelling about experience, impact, and what I am looking for.'
+  explorer: "The visitor is exploring frameworks and work. Be a knowledgeable guide — illuminate the thinking behind the work.",
+  challenge: "The visitor has an organizational challenge. Be consultative — diagnose before prescribing.",
+  engage: "The visitor wants to work together. Be warm, direct, and professional.",
+  recruiter: "The visitor is interested in background and career. Be honest and compelling."
 };
 
 // ── CORS ──
-// Open during testing — accepts requests from any origin.
-// Once enablingvalue.com is live, replace origin with
-// 'https://enablingvalue.com' to lock it down.
 function corsHeaders(request) {
-  const origin = request.headers.get('Origin') || '*';
+  const origin = request.headers.get("Origin") || "*";
   return {
-    'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Max-Age': '86400',
+    "Access-Control-Allow-Origin": origin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Max-Age": "86400",
   };
 }
 
-// ── RATE LIMITING (simple in-memory, resets per Worker instance) ──
-// For production, use Cloudflare KV for persistent rate limiting
-const requestCounts = new Map();
-const RATE_LIMIT = 30;       // requests per window
-const RATE_WINDOW = 60000;   // 1 minute in ms
+// ── PINECONE QUERY ──
+async function queryPinecone(question, env) {
+  if (!env.PINECONE_API_KEY || !env.PINECONE_HOST) return [];
 
-function checkRateLimit(ip) {
-  const now = Date.now();
-  const entry = requestCounts.get(ip);
+  try {
+    // Step 1 — Embed the question
+    const embedRes = await fetch("https://api.pinecone.io/embed", {
+      method: "POST",
+      headers: {
+        "Api-Key": env.PINECONE_API_KEY,
+        "Content-Type": "application/json",
+        "X-Pinecone-API-Version": "2024-07"
+      },
+      body: JSON.stringify({
+        inputs: [{ text: question }],
+        model: "llama-text-embed-v2",
+        parameters: { input_type: "query", truncate: "END" }
+      })
+    });
 
-  if (!entry || now - entry.start > RATE_WINDOW) {
-    requestCounts.set(ip, { count: 1, start: now });
-    return true;
+    if (!embedRes.ok) return [];
+
+    const embedData = await embedRes.json();
+    const vector = embedData?.data?.[0]?.values;
+    if (!vector) return [];
+
+    // Step 2 — Query Pinecone for top 5 similar chunks
+    const queryRes = await fetch(`${env.PINECONE_HOST}/query`, {
+      method: "POST",
+      headers: {
+        "Api-Key": env.PINECONE_API_KEY,
+        "Content-Type": "application/json",
+        "X-Pinecone-API-Version": "2024-07"
+      },
+      body: JSON.stringify({
+        vector: vector,
+        topK: 5,
+        includeMetadata: true
+      })
+    });
+
+    if (!queryRes.ok) return [];
+
+    const queryData = await queryRes.json();
+    return queryData?.matches || [];
+
+  } catch (err) {
+    console.log("Pinecone error:", err.message);
+    return [];
   }
+}
 
-  if (entry.count >= RATE_LIMIT) return false;
-  entry.count++;
-  return true;
+// ── BUILD CONTEXT FROM PINECONE RESULTS ──
+function buildContext(matches) {
+  if (!matches || matches.length === 0) return "";
+
+  const chunks = matches
+    .filter(m => m.score > 0.4)  // only include relevant matches
+    .map(m => {
+      const filename = m.metadata?.filename || "unknown";
+      const domain   = m.metadata?.domain || "";
+      const text     = m.metadata?.text || "";
+      return `[Source: ${filename} | Domain: ${domain}]\n${text}`;
+    });
+
+  if (chunks.length === 0) return "";
+
+  return "\n\n## Relevant Knowledge from Jeffrey's Documents\n\n" + chunks.join("\n\n---\n\n");
 }
 
 // ── MAIN HANDLER ──
 export default {
   async fetch(request, env) {
 
-    // Handle CORS preflight
-    if (request.method === 'OPTIONS') {
-      return new Response(null, {
-        status: 204,
-        headers: corsHeaders(request)
-      });
+    if (request.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: corsHeaders(request) });
     }
 
-    // Only allow POST to /chat
     const url = new URL(request.url);
-    if (request.method !== 'POST' || url.pathname !== '/chat') {
-      return new Response(JSON.stringify({ error: 'Not found' }), {
+    if (request.method !== "POST" || url.pathname !== "/chat") {
+      return new Response(JSON.stringify({ error: "Not found" }), {
         status: 404,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
+        headers: { "Content-Type": "application/json", ...corsHeaders(request) }
       });
     }
 
-    // Rate limiting
-    const clientIP = request.headers.get('CF-Connecting-IP') || 'unknown';
-    if (!checkRateLimit(clientIP)) {
-      return new Response(JSON.stringify({
-        error: 'Rate limit exceeded. Please wait a moment before trying again.'
-      }), {
-        status: 429,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
-      });
-    }
-
-    // Parse request body
     let body;
     try {
       body = await request.json();
     } catch {
-      return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
+      return new Response(JSON.stringify({ error: "Invalid JSON" }), {
         status: 400,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
+        headers: { "Content-Type": "application/json", ...corsHeaders(request) }
       });
     }
 
-    const { messages, mode = 'explorer' } = body;
-    //console.log('API KEY EXISTS:', !!env.ANTHROPIC_API_KEY, 'LENGTH:', env.ANTHROPIC_API_KEY?.length);
+    const messages = (body.messages || [])
+      .filter(m => m.role === "user" || m.role === "assistant")
+      .map(m => ({ role: m.role, content: String(m.content).slice(0, 4000) }))
+      .slice(-20);
 
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
-      return new Response(JSON.stringify({ error: 'messages array required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
-      });
-    }
+    const mode = body.mode || "explorer";
 
-    // Validate messages — only allow user/assistant roles, string content
-    const sanitized = messages
-      .filter(m => ['user', 'assistant'].includes(m.role) && typeof m.content === 'string')
-      .map(m => ({ role: m.role, content: m.content.slice(0, 4000) })) // cap per-message length
-      .slice(-20); // keep last 20 turns max
+    // Get the latest user message for RAG query
+    const lastUserMsg = messages.filter(m => m.role === "user").pop()?.content || "";
 
-    if (sanitized.length === 0 || sanitized[sanitized.length - 1].role !== 'user') {
-      return new Response(JSON.stringify({ error: 'Last message must be from user' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
-      });
-    }
+    // Query Pinecone for relevant context
+    const matches = await queryPinecone(lastUserMsg, env);
+    const context = buildContext(matches);
 
-    // Build system prompt
+    // Build enriched system prompt
     const modeAddendum = MODE_ADDENDUMS[mode] || MODE_ADDENDUMS.explorer;
-    const fullSystem = `${SYSTEM_PROMPT}\n\nCurrent conversation mode: ${modeAddendum}`;
+    const system = SYSTEM_PROMPT + context + "\n\nMode: " + modeAddendum;
 
-    // Call Anthropic API
+    // Call Anthropic
+    let anthropicRes;
     try {
-      const anthropicResponse = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
+      anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': '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',
           'anthropic-version': '2023-06-01'
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
+          model: "claude-sonnet-4-6",
           max_tokens: 1024,
-          system: fullSystem,
-          messages: sanitized
+          system: system,
+          messages: messages
         })
       });
-
-      if (!anthropicResponse.ok) {
-        const errBody = await anthropicResponse.text();
-        console.error('Anthropic API error:', anthropicResponse.status, errBody);
-        return new Response(JSON.stringify({
-          error: 'AI service temporarily unavailable. AHHHH Please try again shortly.'
-        }), {
-          status: 502,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
-        });
-      }
-
-      const data = await anthropicResponse.json();
-      const reply = data.content?.[0]?.text || '';
-
-      return new Response(JSON.stringify({ reply }), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          ...corsHeaders(request)
-        }
-      });
-
     } catch (err) {
-      console.error('Worker error:', err);
-      return new Response(JSON.stringify({
-        error: 'Something went wrong. Please try again.'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json', ...corsHeaders(request) }
+      return new Response(JSON.stringify({ error: "Failed to reach Anthropic" }), {
+        status: 502,
+        headers: { "Content-Type": "application/json", ...corsHeaders(request) }
       });
     }
+
+    if (!anthropicRes.ok) {
+      const errText = await anthropicRes.text();
+      console.log("Anthropic error:", anthropicRes.status, errText);
+      return new Response(JSON.stringify({ error: "AI service temporarily unavailable. Please try again shortly." }), {
+        status: 502,
+        headers: { "Content-Type": "application/json", ...corsHeaders(request) }
+      });
+    }
+
+    const data = await anthropicRes.json();
+    const reply = data.content?.[0]?.text || "Something went wrong. Please try again.";
+
+    return new Response(JSON.stringify({
+      reply: reply,
+      sources: matches.filter(m => m.score > 0.4).map(m => m.metadata?.filename).filter(Boolean)
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json", ...corsHeaders(request) }
+    });
   }
 };
