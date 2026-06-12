@@ -17,11 +17,11 @@
             <div class="bg-gray-850 p-3 rounded border border-gray-700 mb-4 text-xs space-y-2">
                 <div>
                     <label class="block text-gray-400 font-semibold mb-1">GraphDB URL</label>
-                    <input id="graphdbUrl" type="text" value="http://localhost:7200" class="w-full bg-gray-900 border border-gray-600 rounded p-1 text-gray-200">
+                    <input id="graphdbUrl" type="text" value="http://localhost:7200" class="w-full bg-gray-900 border border-gray-600 rounded p-1 text-gray-200 opacity-50" readonly>
                 </div>
                 <div>
                     <label class="block text-gray-400 font-semibold mb-1">Repository ID</label>
-                    <input id="repoId" type="text" value="my-repo" class="w-full bg-gray-900 border border-gray-600 rounded p-1 text-gray-200">
+                    <input id="repoId" type="text" value="Value-kb" class="w-full bg-gray-900 border border-gray-600 rounded p-1 text-gray-200">
                 </div>
                 <button onclick="refreshSidebar()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-1 px-2 rounded tracking-wide transition">
                     Connect & Refresh
@@ -52,6 +52,9 @@
                 <p id="currentAssetUri" class="text-xs text-gray-500 italic"></p>
             </div>
             <div class="flex gap-3">
+                <button id="btnMetadata" onclick="openMetadataEditor()" disabled class="bg-amber-600 opacity-50 cursor-not-allowed text-white font-bold py-2 px-4 rounded text-sm transition">
+                    📝 Edit Metadata
+                </button>
                 <button id="btnSave" onclick="saveAsset()" disabled class="bg-indigo-600 opacity-50 cursor-not-allowed text-white font-bold py-2 px-4 rounded text-sm transition">
                     💾 Save changes
                 </button>
@@ -92,9 +95,8 @@
         let isCreateMode = false;
 
         function getBaseUrl() {
-            const url = document.getElementById('graphdbUrl').value.replace(/\/$/, "");
             const repo = document.getElementById('repoId').value;
-            return `${url}/repositories/${repo}`;
+            return `/graphdb/repositories/${repo}`;
         }
 
         function switchTab(tab) {
@@ -109,10 +111,18 @@
             const endpoint = getBaseUrl();
             
             // SPARQL queries mapping named graphs to their primary content type definitions
-            const skosQuery = `PREFIX skos: <http://www.w3.org/2004/02/skos/core#> 
-                               SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s a skos:ConceptScheme . } }`;
-            const owlQuery  = `PREFIX owl: <http://www.w3.org/2002/07/owl#> 
-                               SELECT DISTINCT ?graph WHERE { GRAPH ?graph { ?s a owl:Ontology . } }`;
+			const skosQuery = `PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+                   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                   SELECT DISTINCT ?graph ?label WHERE { 
+                     ?graph a skos:ConceptScheme .
+                     OPTIONAL { ?graph rdfs:label ?label }
+                   }`;
+			const owlQuery  = `PREFIX owl: <http://www.w3.org/2002/07/owl#>
+                   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                   SELECT DISTINCT ?graph ?label WHERE { 
+                     ?graph a owl:Ontology .
+                     OPTIONAL { ?graph rdfs:label ?label }
+                   }`;
             
             const query = currentTab === 'skos' ? skosQuery : owlQuery;
 
@@ -184,6 +194,17 @@
             }
         }
 
+        // Open the metadata editor in a new window for the currently selected asset
+        function openMetadataEditor() {
+            if (!selectedGraphUri) {
+                alert("No asset selected.");
+                return;
+            }
+            const repo = document.getElementById('repoId').value;
+            const url = `model-metadata.html?uri=${encodeURIComponent(selectedGraphUri)}&repo=${encodeURIComponent(repo)}`;
+            window.open(url, 'metadataEditor', 'width=800,height=900,resizable=yes,scrollbars=yes');
+        }
+
         function prepareCreateNew() {
             isCreateMode = true;
             selectedGraphUri = null;
@@ -197,6 +218,8 @@
             toggleActionButtons(false);
             document.getElementById('btnSave').disabled = false;
             document.getElementById('btnSave').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btnMetadata').disabled = true;
+            document.getElementById('btnMetadata').classList.add('opacity-50', 'cursor-not-allowed');
         }
 
         // 3. CREATE & EDIT: Push the complete payload using PUT (Overwrites/Writes graph)
@@ -269,14 +292,22 @@
         function toggleActionButtons(enabled) {
             const btnSave = document.getElementById('btnSave');
             const btnDelete = document.getElementById('btnDelete');
+            const btnMetadata = document.getElementById('btnMetadata');
             if(enabled) {
                 btnSave.disabled = false; btnDelete.disabled = false;
                 btnSave.classList.remove('opacity-50', 'cursor-not-allowed');
                 btnDelete.classList.remove('opacity-50', 'cursor-not-allowed');
+                // Metadata editing only makes sense for existing assets, not new ones
+                if (!isCreateMode) {
+                    btnMetadata.disabled = false;
+                    btnMetadata.classList.remove('opacity-50', 'cursor-not-allowed');
+                }
             } else {
                 btnSave.disabled = true; btnDelete.disabled = true;
+                btnMetadata.disabled = true;
                 btnSave.classList.add('opacity-50', 'cursor-not-allowed');
                 btnDelete.classList.add('opacity-50', 'cursor-not-allowed');
+                btnMetadata.classList.add('opacity-50', 'cursor-not-allowed');
             }
         }
     </script>
